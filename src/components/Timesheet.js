@@ -4,6 +4,8 @@ import { Button, Container, Row, Col, Form } from 'react-bootstrap';
 import Data from './Data';
 import { BsFillChatLeftFill } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
+import Popup from './Popup';
+import { FormGroup, InputGroup, FormControl } from 'react-bootstrap';
 
 const Timesheet = () => {
     const [arr, setArr] = useState(Data); 
@@ -18,6 +20,7 @@ const Timesheet = () => {
     const [wed, setWed] = useState(0); 
     const [thu, setThu] = useState(0); 
     const [fri, setFri] = useState(0); 
+    const [openPopup, setOpenPopup] = useState(false); 
 
     const increment = () => {
         //setSelData(selData.push(selection)); 
@@ -69,6 +72,10 @@ const Timesheet = () => {
     }
     const friChanged = (event) => {
         setFri(fri+parseInt(event.target.value)); 
+    }
+
+    const handleClose = () => {
+        setOpenPopup(false);
     }
 
     useEffect(() => {
@@ -159,7 +166,7 @@ const Timesheet = () => {
                                 <Form.Control onChange={monChanged} size='sm'/>
                             </div>
                             <div className="col-3">
-                                <BsFillChatLeftFill/>
+                                <BsFillChatLeftFill style={{cursor:'pointer'}} onClick={() => setOpenPopup(true)}/>
                             </div>
                         </div>
                     </Col>
@@ -236,6 +243,19 @@ const Timesheet = () => {
                     </Col>
                 </Row>
             </Container>
+            <Popup
+                openPopup={openPopup}
+                handleClose={handleClose}
+            >
+                <div>Label</div>
+                <Form>
+                    <FormGroup>
+                        <InputGroup>
+                        <FormControl readOnly={true} value='default'/>
+                        </InputGroup>
+                    </FormGroup>
+                </Form>
+            </Popup>
         </div>
     );
 }; 
