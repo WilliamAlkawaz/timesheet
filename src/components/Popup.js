@@ -5,11 +5,21 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from 'react-bootstrap';
+import { AiFillCloseCircle } from "react-icons/ai";
 
 const Popup = ({openPopup, children, handleClose}) => {
     return (
       <Dialog open={openPopup}>
-        <DialogTitle>Title</DialogTitle>
+        <DialogTitle>
+            <div style={{display:'flex'}}>
+                <div style={{flexGrow:1}}>
+                    Add comment
+                </div>
+                <div>
+                    <AiFillCloseCircle style={{cursor:'pointer'}} onClick={handleClose}/>
+                </div>
+            </div>
+        </DialogTitle>
         <DialogContent>
             {children}
         </DialogContent>
