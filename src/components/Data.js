@@ -1,11 +1,13 @@
 const Data = {
     employee: 'Sam', 
     projects: [
-        {id: 0, name: 'Project 1', tasks: [{id: 0, name: 'Task11'}, {id: 1, name: 'Task21'}, {id: 2, name: 'Task31'}]}, 
-        {id: 1, name: 'Project 2', tasks: [{id: 3, name: 'Task12'}, {id: 4, name: 'Task22'}, {id: 5, name: 'Task32'}]}, 
-        {id: 2, name: 'Project 3', tasks: [{id: 6, name: 'Task13'}, {id: 7, name: 'Task23'}, {id: 8, name: 'Task33'}]}
+        {id: -1, name: 'Select a project ...', tasks:[]},
+        {id: 0, name: 'Datacom Internal: K38125 IF0025', tasks: [{id: -1, name: 'Select a task ...'}, {id: 0, name: 'Task11'}, {id: 1, name: 'Task21'}, {id: 2, name: 'Task31'}]}, 
+        {id: 1, name: 'Datacom Internal: K38017 AKL SERVICE', tasks: [{id: -1, name: 'Select a task ...'}, {id: 3, name: 'Task12'}, {id: 4, name: 'Task22'}, {id: 5, name: 'Task32'}]}, 
+        {id: 2, name: 'Datacom Internal: K38113 IF0025 Ecosystem Customer', tasks: [{id: -1, name: 'Select a task ...'}, {id: 6, name: 'RBNZ Workday [Integration]'}, {id: 7, name: 'Rabobank Workday [Integration]'}, {id: 9, name: 'GNS/ESR Workday [Integration]'}, {id: 8, name: 'Transition [Integration]'}]}
     ], 
     workType: [
+        {id: -1, name: 'Select a work type ...'},
         {id: 0, name: 'NZ ordinary hours'},
         {id: 1, name: 'NZ overtime'}, 
         {id: 2, name: 'AUS ordinary hours'}, 

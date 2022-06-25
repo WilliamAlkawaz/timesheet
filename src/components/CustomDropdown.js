@@ -1,30 +1,36 @@
-import React, { useState } from 'react';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Tooltip from '@mui/material/Tooltip';
 
-const CustomDropdown = ({id, arr, handleSel, title}) => {
+const CustomDropdown = ({id, arr, handleSel, selId, title, width}) => {
+  const createOptions = (arr) =>
+  {
+    var a = new Array(arr.length);
+    arr.forEach((e, i) => {
+      let el = {value: e.id, label: e.name}
+      a.push(el); 
+    });
+    return a; 
+  }
 
   return (
     <div>
-      <DropdownButton id="dropdown-basic-button"
-        variant="info"
-        className="floatRight"
-        onSelect={(event, e) => handleSel(id, e.target.value)}
-        title={title}
-        size='sm'
-      >
-      {
-        true ? 
-          arr.map((x, i) => {
-            return (
-            <Dropdown.Item as='option' key={x.id} eventKey={x.name} value={x.id}>
-              {x.name}
-            </Dropdown.Item>
-            );
-          })
-        : ''
-      }
-      </DropdownButton>
+      <Tooltip title={title} placement='top'>
+        <div>
+          <select 
+            id={id}
+            value={selId}
+            onChange={(e) => handleSel(id, e.target.value)}
+            style={{width: width}}
+          >
+            {
+              arr.map((e, i) => {
+                return <option key={e.id} value={e.id}>{e.name}</option>
+              })
+            }
+          </select>
+        </div>
+      </Tooltip>
     </div>
   );
 }; 

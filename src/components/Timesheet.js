@@ -46,11 +46,13 @@ const Timesheet = () => {
     }
 
     const handleSel = (rowId, id) => {
+        console.log('the rowId: ' + rowId + 'the id: ' + id);
         const tempId = selData[rowId].selProject; 
         const selDataClone = [...selData]; 
         const selTitlesClone = [...selTitles]; 
         selDataClone[rowId].selProject = id; 
-        selTitlesClone[rowId].selProjectTitle = Data.projects.find(x => x.id.toString() === id).name; 
+        selDataClone[rowId].selTask = -1; 
+        selTitlesClone[rowId].selProjectTitle = Data.projects.find(x => x.id.toString() === id.toString()).name; 
         selTitlesClone[rowId].selTaskTitle = 'Select a task';
         if(tempId === -1)
         {
@@ -63,13 +65,15 @@ const Timesheet = () => {
     }
     
     const handleTaskSel = (rowId, id) => {
-        console.log('id is ' + id + ' rowId is ' + rowId + ' count ' + count);
+        console.log('id is ' + id.toString() + ' rowId is ' + rowId + ' count ' + count);
         console.log(selData[rowId].selTask.toString());
         const projectId = selData[rowId].selProject; 
         const selDataClone = [...selData]; 
         const selTitlesClone = [...selTitles]; 
         selDataClone[rowId].selTask = id; 
-        selTitlesClone[rowId].selTaskTitle = Data.projects[projectId].tasks.find(x => x.id.toString() === id).name; 
+        selTitlesClone[rowId].selTaskTitle = Data.projects.find(p => p.id.toString() === selData[rowId].selProject.toString()).tasks
+        .find(x => x.id.toString() === id.toString()).name;
+        // Data.projects[parseInt(projectId)].tasks.find(x => x.id.toString() === id.toString()).name; 
         setSelData(selDataClone);
         setSelTitles(selTitlesClone);
     }
@@ -79,7 +83,7 @@ const Timesheet = () => {
         const selDataClone = [...selData]; 
         const selTitlesClone = [...selTitles]; 
         selDataClone[rowId].selWorkType = id; 
-        selTitlesClone[rowId].selWorkTypeTitle = Data.workType.find(x => x.id.toString() === id).name; 
+        selTitlesClone[rowId].selWorkTypeTitle = Data.workType.find(x => x.id.toString() === id.toString()).name; 
         setSelData(selDataClone);
         setSelTitles(selTitlesClone);
     }
@@ -124,8 +128,8 @@ const Timesheet = () => {
     }
 
     useEffect(() => {
-        console.log('from useEffect ' + selData[0]);
-    }, [selData])
+        // console.log('from useEffect ' + selData[0]);
+    })
 
     return (
         <div>
@@ -140,9 +144,9 @@ const Timesheet = () => {
                     <Col><Button variant='success' size='sm'>Save</Button></Col>
                 </Row>
             </Container>
-            <div className='block-example border border-dark' style={{width:'90em',paddingRight:2,paddingLeft:2,overflow:'auto'}}>
-                <Row className='block-example border border-dark  p-2'>
-                    <Col sm={2}>
+            <div className='block-example border border-dark' style={{width:'90em',paddingRight:10,paddingLeft:10}}>
+                <Row className='block-example border-bottom border-dark  p-2 m-1'>
+                    <Col sm={3}>
                         Project
                     </Col>
                     <Col sm={2}>
@@ -159,18 +163,20 @@ const Timesheet = () => {
                 </Row>
                 {Array.from(Array(count+1), (e, i) => {
                     return <Row className='p-1' key={i}>
-                    <Col sm={2}>
+                    <Col sm={3}>
                         <div style={{display:'flex'}}>
-                            <div style={{marginRight:1}}>
+                            <div style={{marginRight:-30, width:'20%'}}>
                                 {selData[i].selProject > -1 ? <Button key={i} onClick={(e) => decrement(i)} variant="danger" size='sm'><MdDelete/></Button> : ''}
                             </div>
-                            <div>
+                            <div style={{width:'80%'}}>
                                 <CustomDropdown 
                                     key={i} 
                                     id={i}
                                     arr={Data.projects} 
+                                    selId={selData[i].selProject}
                                     title={selData[i].selProject > -1 ? selTitles[i].selProjectTitle : 'Select a project'}
                                     handleSel={handleSel}
+                                    width='300px'
                                 />
                             </div>
                         </div>
@@ -179,9 +185,11 @@ const Timesheet = () => {
                         <CustomDropdown 
                             key={i} 
                             id={i}
-                            arr={selData[i].selProject > -1 ? Data.projects[selData[i].selProject].tasks : []} 
-                            title={selData[i].selProject > -1 ? selTitles[i].selTaskTitle : 'Select a task'}
+                            arr={selData[i].selProject > -1 ? Data.projects.find(p => p.id.toString() === selData[i].selProject.toString()).tasks : []} 
+                            selId={selData[i].selTask}
+                            title={selTitles[i].selTaskTitle}
                             handleSel={handleTaskSel}
+                            width='230px'
                         />
                     </Col>
                     <Col sm={2}>
@@ -189,8 +197,10 @@ const Timesheet = () => {
                             key={i} 
                             id={i}
                             arr={Data.workType} 
+                            selId={selData[i].selWorkType}
                             title={selData[i].selProject > -1 ? selTitles[i].selWorkTypeTitle : 'Select a work type'}
                             handleSel={handleWorkTypeSel}
+                            width='220px'
                         />
                     </Col>
                     {
@@ -219,8 +229,8 @@ const Timesheet = () => {
                     }
                 </Row>
                 })}
-                <Row className='block-example border border-dark p-2'>
-                    <Col sm={2}>
+                <Row className='block-example border-top border-dark p-2 m-1'>
+                    <Col sm={3}>
                     <div className="row">
                         <div className="col-2">
                             Total
@@ -247,13 +257,11 @@ const Timesheet = () => {
                 title={popUpTitle}
             >
                 <div>Customer Notes</div>
-                
                     <FormGroup>
                         <InputGroup>
                         <textarea value={popUpComment} onChange={(e) => setPopUpComment(e.target.value)}/>
                         </InputGroup>
                     </FormGroup>
-                
             </Popup>
         </div>
     );
