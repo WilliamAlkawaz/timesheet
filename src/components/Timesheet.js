@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CustomDropdown from './CustomDropdown';
-import { Button, Container, Row, Col, Form } from 'react-bootstrap';
+import { Button, Container, Row, Col } from 'react-bootstrap';
 import Data from './Data';
 import { BsFillChatLeftFill, BsFillChatLeftTextFill } from 'react-icons/bs';
 import { MdDelete } from "react-icons/md";
@@ -9,7 +9,6 @@ import { FormGroup, InputGroup, FormControl } from 'react-bootstrap';
 import Tooltip from '@mui/material/Tooltip';
 
 const Timesheet = () => {
-    const [arr, setArr] = useState(Data); 
     const [count, setCount] = useState(0);
     // This represents a row of selected item in a certain record in the timesheet. Days comment in an array of 5 days
     // We have to initialise daysComment this way to avoid "Warning: A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component."
@@ -19,7 +18,6 @@ const Timesheet = () => {
     const selTitle= {selProjectTitle: 'Select a project', selTaskTitle: 'Select a task', selWorkTypeTitle: 'Select a title'};
     const [selData, setSelData] = useState([selection]);
     const [selTitles, setSelTitles] = useState([selTitle]);
-    const [tasksArray, setTasksArray] = useState([]);
     const [daysTotal, setDaysTotal] = useState([0, 0, 0, 0, 0]); 
     const [popUpComment, setPopUpComment] = useState(''); 
     const [openPopup, setOpenPopup] = useState(false); 
@@ -30,8 +28,8 @@ const Timesheet = () => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']; 
 
     const decrement = (rowId) => {
-        const selDataClone = [... selData]; // copying the old data array
-        const selTitlesClone = [... selTitles]; // copying the old data array
+        const selDataClone = [...selData]; // copying the old data array
+        const selTitlesClone = [...selTitles]; // copying the old data array
         // First update the total hours 
         let newDaysTotal = [...daysTotal]; // copying the old data array
         days.forEach((x, y) => {
@@ -48,11 +46,9 @@ const Timesheet = () => {
     }
 
     const handleSel = (rowId, id) => {
-        // console.log('id is ' + id + ' rowId is ' + rowId + ' count ' + count);
-        // console.log(selData[rowId].selProject.toString());
         const tempId = selData[rowId].selProject; 
-        const selDataClone = [... selData]; 
-        const selTitlesClone = [... selTitles]; 
+        const selDataClone = [...selData]; 
+        const selTitlesClone = [...selTitles]; 
         selDataClone[rowId].selProject = id; 
         selTitlesClone[rowId].selProjectTitle = Data.projects.find(x => x.id.toString() === id).name; 
         selTitlesClone[rowId].selTaskTitle = 'Select a task';
@@ -70,8 +66,8 @@ const Timesheet = () => {
         console.log('id is ' + id + ' rowId is ' + rowId + ' count ' + count);
         console.log(selData[rowId].selTask.toString());
         const projectId = selData[rowId].selProject; 
-        const selDataClone = [... selData]; 
-        const selTitlesClone = [... selTitles]; 
+        const selDataClone = [...selData]; 
+        const selTitlesClone = [...selTitles]; 
         selDataClone[rowId].selTask = id; 
         selTitlesClone[rowId].selTaskTitle = Data.projects[projectId].tasks.find(x => x.id.toString() === id).name; 
         setSelData(selDataClone);
@@ -80,9 +76,8 @@ const Timesheet = () => {
 
     const handleWorkTypeSel = (rowId, id) => {
         console.log('id is ' + id + ' rowId is ' + rowId + ' count ' + count);
-        const projectId = selData[rowId].selProject; 
-        const selDataClone = [... selData]; 
-        const selTitlesClone = [... selTitles]; 
+        const selDataClone = [...selData]; 
+        const selTitlesClone = [...selTitles]; 
         selDataClone[rowId].selWorkType = id; 
         selTitlesClone[rowId].selWorkTypeTitle = Data.workType.find(x => x.id.toString() === id).name; 
         setSelData(selDataClone);
@@ -103,7 +98,7 @@ const Timesheet = () => {
     const handlePopUpClose = (save, rowId) => {
         if(save)
         {
-            const selDataClone = [... selData]; 
+            const selDataClone = [...selData]; 
             selDataClone[rowId].daysComment[popUpDayId] = popUpComment; 
             setSelData(selDataClone);
         }
@@ -111,41 +106,42 @@ const Timesheet = () => {
     }
 
     const handleHoursChanged = (e, rowId, dayId) => {
-        if(!isNaN(parseInt(e.target.value)) || e.target.value === '')
+        // Update the record hours 
+        const selDataClone = [...selData]; // copying the old data array
+        // const temp = isNaN(selDataClone[rowId].daysHours[dayId]) ? 0 : selDataClone[rowId].daysHours[dayId] // We need this when updating the total, make sure we deal with numbers
+        selDataClone[rowId].daysHours[dayId] = e.target.value; 
+        setSelData(selDataClone);
+        // Update the totals 
+        let newArr = [...daysTotal]; // copying the old data array
+        let sum = 0; 
+        for (var j = 0; j<count+1; j++)
         {
-            // Update the record hours 
-            const selDataClone = [... selData]; // copying the old data array
-            const temp = isNaN(selDataClone[rowId].daysHours[dayId]) ? 0 : selDataClone[rowId].daysHours[dayId] // We need this when updating the total, make sure we deal with numbers
-            selDataClone[rowId].daysHours[dayId] = isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value); 
-            setSelData(selDataClone);
-            // Update the totals 
-            let newArr = [...daysTotal]; // copying the old data array
-            newArr[dayId] = newArr[dayId] + selDataClone[rowId].daysHours[dayId] - temp; // update the current day total hours 
-            setDaysTotal(newArr);
+            if(!isNaN(parseFloat(selDataClone[j].daysHours[dayId])))
+                sum += parseFloat(selDataClone[j].daysHours[dayId]); 
         }
+        newArr[dayId] = sum; // update the current day total hours 
+        setDaysTotal(newArr);
     }
 
     useEffect(() => {
         console.log('from useEffect ' + selData[0]);
-    }, [selTitles])
+    }, [selData])
 
     return (
         <div>
-            <Container className='p-3'>
+            <Container className='p-3' style={{width:'90em'}}>
                 <Row>
                     <Col></Col>
                     <Col></Col>
                     <Col ></Col>
                     <Col></Col>
                     <Col></Col>
-                    <Col><Button variant="warning" size='sm'>Save and submit</Button></Col>
-                    <Col><Button variant="success" size='sm'>Save</Button></Col>
+                    <Col><Button variant='warning' size='sm'>Save and submit</Button></Col>
+                    <Col><Button variant='success' size='sm'>Save</Button></Col>
                 </Row>
             </Container>
-            <Container className="block-example border border-dark">
-                <Row className="block-example border border-dark  p-2">
-                    <Col sm={1}>
-                    </Col>
+            <div className='block-example border border-dark' style={{width:'90em',paddingRight:2,paddingLeft:2,overflow:'auto'}}>
+                <Row className='block-example border border-dark  p-2'>
                     <Col sm={2}>
                         Project
                     </Col>
@@ -157,27 +153,27 @@ const Timesheet = () => {
                     </Col>
                     {
                         days.map((x, y) => {
-                            return <Col key={y} sm={1}>{x}</Col>
+                            return <Col key={y}>{x}</Col>
                         })
                     }
                 </Row>
                 {Array.from(Array(count+1), (e, i) => {
                     return <Row className='p-1' key={i}>
-                    <Col sm={3}>
-                    <div className="row">
-                        <div className="col-2">
-                            {selData[i].selProject > -1 ? <Button key={i} onClick={(e) => decrement(i)} variant="danger" size='sm'><MdDelete/></Button> : ''}
+                    <Col sm={2}>
+                        <div style={{display:'flex'}}>
+                            <div style={{marginRight:1}}>
+                                {selData[i].selProject > -1 ? <Button key={i} onClick={(e) => decrement(i)} variant="danger" size='sm'><MdDelete/></Button> : ''}
+                            </div>
+                            <div>
+                                <CustomDropdown 
+                                    key={i} 
+                                    id={i}
+                                    arr={Data.projects} 
+                                    title={selData[i].selProject > -1 ? selTitles[i].selProjectTitle : 'Select a project'}
+                                    handleSel={handleSel}
+                                />
+                            </div>
                         </div>
-                        <div className="col-3">
-                            <CustomDropdown 
-                                key={i} 
-                                id={i}
-                                arr={arr.projects} 
-                                title={selData[i].selProject > -1 ? selTitles[i].selProjectTitle : 'Select a project'}
-                                handleSel={handleSel}
-                            />
-                        </div>
-                    </div>
                     </Col>
                     <Col sm={2}>
                         <CustomDropdown 
@@ -192,39 +188,39 @@ const Timesheet = () => {
                         <CustomDropdown 
                             key={i} 
                             id={i}
-                            arr={arr.workType} 
+                            arr={Data.workType} 
                             title={selData[i].selProject > -1 ? selTitles[i].selWorkTypeTitle : 'Select a work type'}
                             handleSel={handleWorkTypeSel}
                         />
                     </Col>
                     {
                         days.map((x, y) => {
-                        return <Col key={y} sm={1}>
-                            <div className="row">
-                                <div className="col-6">
-                                    <Form.Control value={isNaN(selData[i].daysHours[y]) || selData[i].daysHours[y] == 0 ? '' : selData[i].daysHours[y]} onChange={(e) => handleHoursChanged(e, i, y)} size='sm'/>
+                        return (<Col key={y} style={{backgroundColor:'lightgray', marginRight:1, marginLeft:1}}>
+                            <div style={{display:'flex'}}>
+                                <div style={{width:'70%', marginRight:10}}>
+                                    <FormControl className='text-center' value={selData[i].daysHours[y]? selData[i].daysHours[y] : ''} onChange={(e) => handleHoursChanged(e, i, y)} size='sm'/>
                                 </div>
-                                    <div className="col-3">
-                                        {
-                                            selData[i].daysComment[y] === '' 
-                                            ? 
-                                                <BsFillChatLeftFill style={{cursor:'pointer'}} onClick={(e) => handleComment(i, y)} />  
-                                            :
-                                                <Tooltip title={selData[i].daysComment[y]} placement='top'>
-                                                    <div>
-                                                        <BsFillChatLeftTextFill style={{cursor:'pointer'}} onClick={(e) => handleComment(i, y)} />
-                                                    </div>
-                                                </Tooltip>
-                                        }
-                                    </div>
+                                <div style={{width:'20%'}}>
+                                    {
+                                        selData[i].daysComment[y] === '' 
+                                        ? 
+                                            <BsFillChatLeftFill style={{cursor:'pointer'}} onClick={(e) => handleComment(i, y)} />  
+                                        :
+                                            <Tooltip title={selData[i].daysComment[y]} placement='top'>
+                                                <div>
+                                                    <BsFillChatLeftTextFill style={{cursor:'pointer'}} onClick={(e) => handleComment(i, y)} />
+                                                </div>
+                                            </Tooltip>
+                                    }
+                                </div>
                             </div>
                         </Col>
-                        })
+                        )})
                     }
                 </Row>
                 })}
                 <Row className='block-example border border-dark p-2'>
-                    <Col sm={3}>
+                    <Col sm={2}>
                     <div className="row">
                         <div className="col-2">
                             Total
@@ -239,11 +235,11 @@ const Timesheet = () => {
                     </Col>
                     {
                         days.map((x, y) => {
-                            return <Col key={y} sm={1}>{daysTotal[y].toString()}</Col>
+                            return <Col className='text-center' key={y}>{daysTotal[y].toString()}</Col>
                         })
                     }
                 </Row>
-            </Container>
+            </div>
             <Popup
                 openPopup={openPopup}
                 handleClose={handlePopUpClose}
