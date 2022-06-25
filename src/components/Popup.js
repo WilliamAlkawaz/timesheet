@@ -5,18 +5,19 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button } from 'react-bootstrap';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle } from 'react-icons/ai';
 
-const Popup = ({openPopup, children, handleClose}) => {
+const Popup = ({openPopup, children, handleClose, row, title}) => {
     return (
       <Dialog open={openPopup}>
         <DialogTitle>
-            <div style={{display:'flex'}}>
+            <div style={{display:'flex', backgroundColor:'lightgray', padding:1}}>
                 <div style={{flexGrow:1}}>
-                    Add comment
+                    <h6>Additional information for</h6> 
+                    <p>{title}</p>
                 </div>
                 <div>
-                    <AiFillCloseCircle style={{cursor:'pointer'}} onClick={handleClose}/>
+                    <AiFillCloseCircle style={{cursor:'pointer'}} onClick={(e) => handleClose(false, row)}/>
                 </div>
             </div>
         </DialogTitle>
@@ -24,8 +25,8 @@ const Popup = ({openPopup, children, handleClose}) => {
             {children}
         </DialogContent>
         <DialogActions>
-          <Button variant='warning' size='sm' onClick={handleClose}>Cancel</Button>
-          <Button variant='success' size='sm' onClick={handleClose}>Save</Button>
+          <Button variant='warning' size='sm' onClick={(e) => handleClose(false, row)}>Cancel</Button>
+          <Button variant='success' size='sm' onClick={(e) => handleClose(true, row)}>Save</Button>
         </DialogActions>
       </Dialog>
     );
